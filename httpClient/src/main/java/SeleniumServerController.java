@@ -38,7 +38,8 @@ public class SeleniumServerController {
         GetMethod method = new GetMethod();
 
         try {
-            uri = new URI("controller.server.url", true);
+//            uri = new URI("controller.server.url", true);
+            uri = new URI("http://127.0.0.1:8080/control", true);
             method.setURI(uri);
         } catch (URIException e) {
             e.printStackTrace();
@@ -77,7 +78,8 @@ public class SeleniumServerController {
         URI uri;
         GetMethod method = new GetMethod();
         try {
-            uri = new URI("controller.server.url", true);
+//            uri = new URI("controller.server.url", true);
+            uri = new URI("http://127.0.0.1:8080/control", true);
             method.setURI(uri);
         } catch (URIException e) {
             e.printStackTrace();

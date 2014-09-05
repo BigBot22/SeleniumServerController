@@ -15,7 +15,7 @@ public class HttpController {
                 " exitValue:" + state.get("exitValue") + " exception:" + state.get("exception"));
 
 
-        LOGGER.info("startReturn:" + controller.start("java -jar target/classes/selenium-server-standalone-2.42.2.jar -port 4444"));
+        LOGGER.info("startReturn:" + controller.start("java -jar selenium-server-standalone-2.42.2.jar -port 4445"));
 
 
 //        LOGGER.info("stopReturn:" + controller.stop());

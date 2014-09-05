@@ -35,6 +35,8 @@ public class Controller extends HttpServlet {
 
     }
 
+    enum States { start, stop, restart }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -69,83 +71,88 @@ public class Controller extends HttpServlet {
     }
 
     String handelStat(String potentialState, String commandLine) {
-        if (potentialState.equals("start")) {
-            if (!isRunning) {
+
+        States state = States.valueOf(potentialState);
+        switch (state) {
+
+            case start:
+
+                if (!isRunning) {
+
+                    try {
+
+                        startServer(commandLine);
+
+                    } catch (IOException e) {
+                        LOGGER.info(e.getMessage());
+                        return "Starting selenium server was failed. Command line:" + commandLine +
+                                "\n IOException was thrown:\n" + e.getMessage();
+                    }
+
+                    isRunning = true;
+                    runningCommandLine = commandLine;
+                    exitValue = Integer.MAX_VALUE;
+                    exception = "-";
+                    return "selenium server started with command line:" + commandLine;
+
+                } else {
+                    return "server has been already started with commandLine:" + runningCommandLine;
+                }
+
+            case stop:
+
+                if (isRunning) {
+
+                    if (stoppingProcess() == 0) {
+                        return "Selenium server has been killed successfully.\n" +
+                                "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
+                                " exitValue:" + exitValue + " exception:" + exception;
+
+
+                    } else {
+                        return "selenium server killing failed:\n" +
+                                "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
+                                " exitValue:" + exitValue + " exception:" + exception; // TODO send exception to
+                    }
+
+                } else {
+                    return "selenium server runningState is already:" + isRunning;
+                }
+
+            case restart:
+
+                if (isRunning) {
+                    if (stoppingProcess() != 0) {
+                        return "selenium server killing failed:\n" +
+                                "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
+                                " exitValue:" + exitValue + " exception:" + exception; // TODO send exception to
+                    }
+                }
 
                 try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
+                try {
                     startServer(commandLine);
-
-                } catch (IOException e) {
+                } catch (final Exception e) {
                     LOGGER.info(e.getMessage());
-                    return "Starting selenium server was failed. Command line:" + commandLine +
-                            "\n IOException was thrown:\n" + e.getMessage();
+                    return "Restarting selenium server was failed:\n" +
+                            "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
+                            " exitValue:" + exitValue + " exception:" + exception + " Exception" + e.getMessage();
                 }
 
                 isRunning = true;
                 runningCommandLine = commandLine;
                 exitValue = Integer.MAX_VALUE;
                 exception = "-";
-                return "selenium server started with command line:" + commandLine;
 
-            } else {
-                return "server has been already started with commandLine:" + runningCommandLine;
-            }
+                return "selenium server has been restarted with command line:" + commandLine;
+
+            default: return potentialState + " has not implemented";
         }
-
-        if (potentialState.equals("stop")) {
-            if (isRunning) {
-
-                if (stoppingProcess() == 0) {
-                    return "Selenium server has been killed successfully.\n" +
-                            "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
-                            " exitValue:" + exitValue + " exception:" + exception;
-
-
-                } else {
-                    return "selenium server killing failed:\n" +
-                            "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
-                            " exitValue:" + exitValue + " exception:" + exception; // TODO send exception to
-                }
-
-            } else {
-                return "selenium server runningState is already:" + isRunning;
-            }
-        }
-
-        if (potentialState.equals("restart")) {
-            if (isRunning) {
-                if (stoppingProcess() != 0) {
-                    return "selenium server killing failed:\n" +
-                            "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
-                            " exitValue:" + exitValue + " exception:" + exception; // TODO send exception to
-                }
-            }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                startServer(commandLine);
-            } catch (final Exception e) {
-                LOGGER.info(e.getMessage());
-                return "Restarting selenium server was failed:\n" +
-                        "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
-                        " exitValue:" + exitValue + " exception:" + exception + " Exception" + e.getMessage();
-            }
-
-            isRunning = true;
-            runningCommandLine = commandLine;
-            exitValue = Integer.MAX_VALUE;
-            exception = "-";
-
-            return "selenium server has been restarted with command line:" + commandLine;
-        }
-
-        return potentialState + " has not implemented";
     }
 
     private void startServer(String commandLine) throws IOException {
