@@ -16,13 +16,13 @@ import java.util.logging.Logger;
 
 public class Controller extends HttpServlet {
 
-    boolean isRunning;
-    String runningCommandLine;
-    int exitValue;
-    String exception;
+    private boolean isRunning;
+    private String runningCommandLine;
+    private int exitValue;
+    private String exception;
 
-    SeleniumResultHandler resultHandler;
-    ExecuteWatchdog watchdog;
+    private SeleniumResultHandler resultHandler;
+    private ExecuteWatchdog watchdog;
 
     private final static Logger LOGGER = Logger.getLogger(Controller.class.getName());
 
@@ -71,12 +71,6 @@ public class Controller extends HttpServlet {
     String handelStat(String potentialState, String commandLine) {
         if (potentialState.equals("start")) {
             if (!isRunning) {
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
                 try {
 
@@ -238,10 +232,6 @@ public class Controller extends HttpServlet {
             runningCommandLine = "-";
             exitValue = exitVal;
             exception = "-";
-//            resultHandler = null;
-//            watchdog = null;
-
-
         }
 
         @Override
@@ -253,15 +243,11 @@ public class Controller extends HttpServlet {
             runningCommandLine = "-";
             exitValue = -5;
 
-//            resultHandler = null;
-
             if (watchdog != null && watchdog.killedProcess()) {
                 exception = "[resultHandler] The print process timed out";
             } else {
                 exception = "[resultHandler] The print process failed to do : " + e.getMessage();
             }
-//            watchdog = null;
-
         }
     }
 

@@ -16,6 +16,5 @@ public class ServiceRunner {
 
         server.setHandler(context);
         server.start();
-
     }
 }

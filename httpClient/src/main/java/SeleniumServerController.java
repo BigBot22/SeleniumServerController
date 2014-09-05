@@ -11,9 +11,6 @@ import java.util.Map;
 
 public class SeleniumServerController {
 
-    static private String controllerServerURL = "http://172.18.67.72:8080/control";
-
-
     public String start(String commandLine) {
 
         Map<String, String> state = getState();
@@ -41,7 +38,7 @@ public class SeleniumServerController {
         GetMethod method = new GetMethod();
 
         try {
-            uri = new URI(controllerServerURL, true);
+            uri = new URI("controller.server.url", true);
             method.setURI(uri);
         } catch (URIException e) {
             e.printStackTrace();
@@ -80,17 +77,21 @@ public class SeleniumServerController {
         URI uri;
         GetMethod method = new GetMethod();
         try {
-            uri = new URI("http://172.18.67.72:8080/control", true);
+            uri = new URI("controller.server.url", true);
             method.setURI(uri);
         } catch (URIException e) {
             e.printStackTrace();
         }
 
-        String jsonStr = "{\"state\":\"" + state + "\",\"commandLine\":\"" + commandLine + "\"}";
+        final Map<String, String> map = new HashMap<>();
+
+        map.put("state", "" + state);
+
+        map.put("commandLine", commandLine);
 
         String encodedQueryString = null;
         try {
-            encodedQueryString = (URIUtil.encodeQuery("json=" + jsonStr));
+            encodedQueryString = (URIUtil.encodeQuery("json=" + new JSON().toJSON(map)));
         } catch (URIException e) {
             e.printStackTrace();
         }
@@ -109,5 +110,4 @@ public class SeleniumServerController {
 
         return responseBodyString;
     }
-
 }
