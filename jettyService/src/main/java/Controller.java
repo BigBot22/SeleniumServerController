@@ -112,7 +112,7 @@ public class Controller extends HttpServlet {
                     } else {
                         return "selenium server killing failed:\n" +
                                 "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
-                                " exitValue:" + exitValue + " exception:" + exception; // TODO send exception to
+                                " exitValue:" + exitValue + " exception:" + exception;
                     }
 
                 } else {
@@ -125,7 +125,7 @@ public class Controller extends HttpServlet {
                     if (stoppingProcess() != 0) {
                         return "selenium server killing failed:\n" +
                                 "running:" + isRunning + " runningCommandLine:" + runningCommandLine +
-                                " exitValue:" + exitValue + " exception:" + exception; // TODO send exception to
+                                " exitValue:" + exitValue + " exception:" + exception;
                     }
                 }
 
@@ -166,7 +166,6 @@ public class Controller extends HttpServlet {
         LOGGER.info("executing non-blocking selenium server job  ...");
         resultHandler = new SeleniumResultHandler(watchdog);
 
-        //TODO normal parsing of selenium server file in cmdLine
         StringTokenizer stringTokenizer = new StringTokenizer(commandLine, " ");
         stringTokenizer.nextToken(); //java
         stringTokenizer.nextToken(); //-jar
