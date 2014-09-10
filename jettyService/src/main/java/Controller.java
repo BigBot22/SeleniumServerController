@@ -26,12 +26,14 @@ public class Controller extends HttpServlet {
 
     private final static Logger LOGGER = Logger.getLogger(Controller.class.getName());
 
-    public Controller() {
+    public Controller(String defaultCommandLine) {
 
         isRunning = false;
         runningCommandLine = "-";
         exitValue = Integer.MAX_VALUE;
         exception = null;
+
+        handelStat("start", defaultCommandLine);
 
     }
 
