@@ -167,17 +167,20 @@ public class Controller extends HttpServlet {
         resultHandler = new SeleniumResultHandler(watchdog);
 
         StringTokenizer stringTokenizer = new StringTokenizer(commandLine, " ");
-        stringTokenizer.nextToken(); //java
-        stringTokenizer.nextToken(); //-jar
 
-        String seleniumServerName = stringTokenizer.nextToken(); //selenium-server-standalone-2.42.2.jar
-        File f = new File(seleniumServerName);
-        if (!f.exists() || f.isDirectory()) {
-            throw new IOException("file doesn't exist:" + seleniumServerName);
+        String seleniumServerName;
+        for (int i = 0; i < stringTokenizer.countTokens(); ++i) {
+            seleniumServerName = stringTokenizer.nextToken();
+            if (seleniumServerName.matches("selenium-server-standalone-(\\d|\\.)*\\.jar")) { //selenium-server-standalone-2.42.2.jar
+                File f = new File(seleniumServerName);
+                if (!f.exists() || f.isDirectory()) {
+                    throw new IOException("file doesn't exist:" + seleniumServerName);
+                }
+                executor.execute(CommandLine.parse(commandLine), resultHandler);
+                return;
+            }
         }
-
-        executor.execute(CommandLine.parse(commandLine), resultHandler);
-
+        throw new IOException("No seleniumServer file name in command line");
     }
 
     private int stoppingProcess() {
